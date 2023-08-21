@@ -27,7 +27,16 @@ class ProductViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)        
     
     def retrieve(self, request, pk=None):
-        pass
+        if cache.get(id):
+            print('Data from Cache')
+            product = cache.get(id)
+        else:
+            product = Product.objects.get(id=pk)
+            cache.set(id, product)
+            print('Data from Database')
+            
+        serializer = ProductSerializer(product, many=False)
+        return Response(serializer.data)
     
     def update(self, request, pk=None):
         pass
